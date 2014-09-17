@@ -12,7 +12,7 @@ import java.util.Random;
 public class SortTest {
 	
 	public static long cnt;
-	
+	static Random rand = new Random();
 	
 
 	/**
@@ -54,11 +54,72 @@ public class SortTest {
 		a[k]=tmp;
 		cnt++;
 	}
- 	
+ 
+	
+	/**
+	 * Wrapper which calls the recursive version of the 
+	 * quick sort program
+	 * @param a the int array to be sorted
+	 */
+	public static void quickSort(int [] a){
+		qSort(a,0,a.length-1);
+	}
+
+	/**
+	 * recursive version of quick sort (sorts 
+	 * the range a[from..to] of the int array 'a')
+	 * @param a 
+	 * @param from 
+	 * @param to
+	 */
+	private static void qSort(int []a, int from, int to){
+		if (from >= to) return; // nothing to do if sequence has length 1 or less
+		int piv = partition(a,from,to);
+		// now a[to..piv-1] <= a[piv] and 
+		// a[piv+1..to]>=a[piv]
+		qSort(a,from,piv-1);
+		qSort(a,piv+1,to);
+	}
+	
+	/**
+	 * partitions the range such that all of the elements 
+	 * in the range a[from..piv-1] are smaller than a[piv]
+	 * and all elements in the range a[piv+1..to] are greater 
+	 * or equal than a[piv]
+	 * @param a
+	 * @param from
+	 * @param to
+	 * @return the position 'piv' of the pivot
+	 */
+	private static int partition(int []a, int from, int to){
+		// take a random pivot and put it at the end 
+		// of the range
+		// (necessary if data not random)
+		if (from<to) swap(a,rand.nextInt(to-from)+from,to); 
+		int pivot = a[to];
+		int left = from-1;
+		int right = to;
+		while(true){
+			while(a[++left] < pivot);
+			while(a[--right] >= pivot)
+			{
+				if (right==from) break; // break right decrementing
+			}
+			// finished?
+			if (right <= left) break;
+			swap(a,left,right);
+		}
+		// final swap
+		swap(a,to,left);
+		return left;      // return the final position of the pivot (to be changed!)
+	}
+
+	
+	
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000;
+		int n = 10000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -66,12 +127,12 @@ public class SortTest {
 		// new array
 		int [] a = new int[n];
 		// fill it randomly
-		for (int i=0;i<a.length ;i++) a[i]=i; rand.nextInt(n);
+		for (int i=0;i<a.length ;i++) a[i]=i;//rand.nextInt(n);
 		cnt=0;  // for statistcs reasons
 		// get Time
 		te1=System.currentTimeMillis();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		bubbleSort(a);
+		quickSort(a);
 		te2 = System.currentTimeMillis();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
