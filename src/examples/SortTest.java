@@ -95,23 +95,9 @@ public class SortTest {
 		// take a random pivot and put it at the end 
 		// of the range
 		// (necessary if data not random)
-		if (from<to) swap(a,rand.nextInt(to-from)+from,to); 
-		int pivot = a[to];
-		int left = from-1;
-		int right = to;
-		while(true){
-			while(a[++left] < pivot);
-			while(a[--right] >= pivot)
-			{
-				if (right==from) break; // break right decrementing
-			}
-			// finished?
-			if (right <= left) break;
-			swap(a,left,right);
-		}
-		// final swap
-		swap(a,to,left);
-		return left;      // return the final position of the pivot (to be changed!)
+		if (from<to) swap(a,rand.nextInt(to-from)+from,to);
+		// ...............
+		return 0;      // return the final position of the pivot (to be changed!)
 	}
 
 	
