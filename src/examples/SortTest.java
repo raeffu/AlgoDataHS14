@@ -20,8 +20,7 @@ public class SortTest {
   public static boolean sortCheck(int[] a) {
     for (int i = 0; i < a.length - 1; i++)
     {
-      if (a[i] > a[i + 1])
-        return false;
+      if (a[i] > a[i + 1]) return false;
     }
     return true;
   }
@@ -81,8 +80,7 @@ public class SortTest {
    * @param to
    */
   private static void qSort(int[] a, int from, int to) {
-    if (from >= to)
-      return; // nothing to do if sequence has length 1 or less
+    if (from >= to) return; // nothing to do if sequence has length 1 or less
     int piv = partition(a, from, to);
     // now a[to..piv-1] <= a[piv] and
     // a[piv+1..to]>=a[piv]
@@ -104,8 +102,7 @@ public class SortTest {
     // take a random pivot and put it at the end
     // of the range
     // (necessary if data not random)
-    if (from < to)
-      swap(a, rand.nextInt(to - from) + from, to);
+    if (from < to) swap(a, rand.nextInt(to - from) + from, to);
 
     int pivot = a[to];
     int left = from - 1;
@@ -116,11 +113,9 @@ public class SortTest {
       while (a[++left] < pivot); // stoppt bei Tauschkandidat von links
       while (a[--right] >= pivot)
       {
-        if (right == from)
-          break;
+        if (right == from) break;
       }
-      if (right <= left)
-        break;
+      if (right <= left) break;
       swap(a, left, right);
     }
 
