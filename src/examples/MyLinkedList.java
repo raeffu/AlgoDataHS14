@@ -69,8 +69,30 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public E replaceElement(Position<E> p, E o) {
-    // TODO Auto-generated method stub
-    return null;
+    LNode old = castToLNode(p);
+    old.creator = null; // invalidate old node
+    LNode n = new LNode();
+    n.elem = o;
+    n.next = old.next;
+    n.prev = old.prev;
+
+    if(old == first)
+    {
+      first = n;
+      if(first.next != null) first.next.prev = n;
+      return old.elem;
+    }
+    if(old == last)
+    {
+      last = n;
+      if(last.prev != null) last.prev.next = n;
+      return old.elem;
+    }
+
+    old.next.prev = n;
+    old.prev.next = n;
+
+    return old.elem;
   }
 
   @Override
@@ -91,26 +113,67 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public Position<E> insertLast(E o) {
-    // TODO Auto-generated method stub
-    return null;
+    LNode n = new LNode();
+    n.elem = o;
+    n.prev = last;
+
+    if(last != null)
+      last.next = n;
+    else
+      first = n;
+
+    size++;
+    last = n;
+
+    return n;
   }
 
   @Override
   public Position<E> insertBefore(Position<E> p, E o) {
-    // TODO Auto-generated method stub
-    return null;
+    LNode old = castToLNode(p);
+    LNode n = new LNode();
+    n.elem = o;
+    n.next = old;
+    n.prev = old.prev;
+
+    if(first == old)
+      first = n;
+
+    if(old.prev != null)
+    {
+      old.prev.next = n;
+    }
+    old.prev = n;
+    size++;
+
+    return n;
   }
 
   @Override
   public Position<E> insertAfter(Position<E> p, E o) {
-    // TODO Auto-generated method stub
-    return null;
+    LNode old = castToLNode(p);
+    LNode n = new LNode();
+    n.elem = o;
+    n.next = old.next;
+    n.prev = old;
+
+    if(last == old)
+      last = n;
+
+    if(old.next != null)
+    {
+      old.next.prev = n;
+    }
+    old.next = n;
+    size++;
+
+    return n;
   }
 
   @Override
   public void remove(Position<E> p) {
-    if(size==0) throw new RuntimeException("List is empty!");
-    
+    if(size == 0) throw new RuntimeException("List is empty!");
+
     LNode n = castToLNode(p);
     size--;
     n.creator = null; // invalidate p
@@ -147,39 +210,49 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public int size() {
-    // TODO Auto-generated method stub
-    return 0;
+    return size;
   }
 
   @Override
   public boolean isEmpty() {
-    // TODO Auto-generated method stub
-    return false;
+    return size == 0;
   }
 
   public static void main(String[] args) {
     List<String> li = new MyLinkedList<>();
     System.out.println("insert hans");
-    li.insertFirst("hans");
-  System.out.println("remove " + li.last().element());
-    li.remove(li.last());
-//    li.insertFirst("heiri");
-//    li.insertFirst("susi");
-//    li.insertFirst("heidi");
-//    Position<String> p1 = li.first();
-//    while (p1 != null)
-//    {
-//      System.out.println(p1.element());
-//      p1 = li.next(p1);
-//    }
+    Position<String> p5 = li.insertFirst("hans");
+    li.insertBefore(p5, "before");
+    li.insertAfter(p5, "after");
+//    System.out.println(li.last().element());
 //    System.out.println("remove " + li.last().element());
-//    li.remove(li.first());
-//    Position<String> p2 = li.first();
-//    while (p2 != null)
+//    li.remove(li.last());
+//    Position<String> p4 = li.insertFirst("heiri");
+//    Position<String> p = li.insertFirst("susi");
+//    li.insertFirst("heidi");
+    Position<String> p1 = li.first();
+    while (p1 != null)
+    {
+      System.out.println(p1.element());
+      p1 = li.next(p1);
+    }
+//    System.out.println("-------");
+//    li.replaceElement(p, "raffi");
+//    li.insertBefore(p4, "danae");
+//    Position<String> p3 = li.first();
+//    while (p3 != null)
 //    {
-//      System.out.println(p2.element());
-//      p2 = li.next(p2);
+//      System.out.println(p3.element());
+//      p3 = li.next(p3);
 //    }
+    // System.out.println("remove " + li.last().element());
+    // li.remove(li.first());
+    // Position<String> p2 = li.first();
+    // while (p2 != null)
+    // {
+    // System.out.println(p2.element());
+    // p2 = li.next(p2);
+    // }
   }
 
 }

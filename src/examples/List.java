@@ -52,7 +52,7 @@ public interface List<E>{
 	
 	/**
 	 * @param o the object which will be inserted before position 'p'
-	 * @return the former object stored at 'p'
+	 * @return the new object stored at first
 	 */
 	public Position<E> insertFirst(E o);
 	
