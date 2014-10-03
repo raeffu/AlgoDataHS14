@@ -2,6 +2,8 @@ package examples;
 
 import java.util.Iterator;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 public class MyLinkedList<E> implements List<E> {
 
   class LNode implements Position<E> {
@@ -136,8 +138,7 @@ public class MyLinkedList<E> implements List<E> {
     n.next = old;
     n.prev = old.prev;
 
-    if(first == old)
-      first = n;
+    if(first == old) first = n;
 
     if(old.prev != null)
     {
@@ -157,8 +158,7 @@ public class MyLinkedList<E> implements List<E> {
     n.next = old.next;
     n.prev = old;
 
-    if(last == old)
-      last = n;
+    if(last == old) last = n;
 
     if(old.next != null)
     {
@@ -198,14 +198,52 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public Iterator<Position<E>> positions() {
-    // TODO Auto-generated method stub
-    return null;
+    return new Iterator<Position<E>>() {
+
+      LNode current = first;
+
+      @Override
+      public boolean hasNext() {
+        return current != null;
+      }
+
+      @Override
+      public Position<E> next() {
+        LNode ret = current;
+        current = current.next;
+        return ret;
+      }
+
+      @Override
+      public void remove() {
+        throw new NotImplementedException();
+      }
+    };
   }
 
   @Override
   public Iterator<E> elements() {
-    // TODO Auto-generated method stub
-    return null;
+    return new Iterator<E>() {
+      
+      LNode current = first;
+      
+      @Override
+      public boolean hasNext() {
+        return current != null;
+      }
+
+      @Override
+      public E next() {
+        E elem = current.elem;
+        current = current.next;
+        return elem;
+      }
+
+      @Override
+      public void remove() {
+        throw new NotImplementedException();
+      }
+    };
   }
 
   @Override
@@ -224,27 +262,27 @@ public class MyLinkedList<E> implements List<E> {
     Position<String> p5 = li.insertFirst("hans");
     li.insertBefore(p5, "before");
     li.insertAfter(p5, "after");
-//    System.out.println(li.last().element());
-//    System.out.println("remove " + li.last().element());
-//    li.remove(li.last());
-//    Position<String> p4 = li.insertFirst("heiri");
-//    Position<String> p = li.insertFirst("susi");
-//    li.insertFirst("heidi");
+    // System.out.println(li.last().element());
+    // System.out.println("remove " + li.last().element());
+    // li.remove(li.last());
+    // Position<String> p4 = li.insertFirst("heiri");
+    // Position<String> p = li.insertFirst("susi");
+    // li.insertFirst("heidi");
     Position<String> p1 = li.first();
     while (p1 != null)
     {
       System.out.println(p1.element());
       p1 = li.next(p1);
     }
-//    System.out.println("-------");
-//    li.replaceElement(p, "raffi");
-//    li.insertBefore(p4, "danae");
-//    Position<String> p3 = li.first();
-//    while (p3 != null)
-//    {
-//      System.out.println(p3.element());
-//      p3 = li.next(p3);
-//    }
+    // System.out.println("-------");
+    // li.replaceElement(p, "raffi");
+    // li.insertBefore(p4, "danae");
+    // Position<String> p3 = li.first();
+    // while (p3 != null)
+    // {
+    // System.out.println(p3.element());
+    // p3 = li.next(p3);
+    // }
     // System.out.println("remove " + li.last().element());
     // li.remove(li.first());
     // Position<String> p2 = li.first();
