@@ -1,6 +1,9 @@
 package examples;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MyTree<E> implements Tree<E> {
 
@@ -8,8 +11,8 @@ public class MyTree<E> implements Tree<E> {
 
     TNode parent;
     E elem;
-    MyLinkedList<Position<E>> children = new MyLinkedList<>();
-    Position<Position<E>> mySiblingPos;
+    MyLinkedList<TNode> children = new MyLinkedList<>();
+    Position<TNode> mySiblingPos;
     Object creator = MyTree.this;
 
     @Override
@@ -59,20 +62,55 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public Iterator<Position<E>> childrenPositions(Position<E> parent) {
-    // TODO Auto-generated method stub
-    return null;
+    final TNode p = castToTNode(parent);
+    return new Iterator<Position<E>>() {
+      Iterator<Position<TNode>> it = p.children.positions();
+
+      @Override
+      public boolean hasNext() {
+        return it.hasNext();
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public Position<E> next() {
+        return (Position<E>) it.next();
+      }
+
+      @Override
+      public void remove() {
+        throw new NotImplementedException();
+      }
+    };
   }
 
   @Override
   public Iterator<E> childrenElements(Position<E> parent) {
-    // TODO Auto-generated method stub
-    return null;
+    final TNode p = castToTNode(parent);
+    return new Iterator<E>() {
+      Iterator<TNode> it = p.children.elements();
+
+      @Override
+      public boolean hasNext() {
+        return it.hasNext();
+      }
+
+      @Override
+      public E next() {
+        return it.next().elem;
+      }
+
+      @Override
+      public void remove() {
+        throw new NotImplementedException();
+      }
+    };
   }
 
   @Override
   public int numberOfChildren(Position<E> parent) {
-    // TODO Auto-generated method stub
-    return 0;
+    TNode p = castToTNode(parent);
+    return p.children.size();
   }
 
   @Override
@@ -100,8 +138,14 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public Position<E> addSiblingAfter(Position<E> sibling, E o) {
-    // TODO Auto-generated method stub
-    return null;
+    TNode sib = castToTNode(sibling);
+    if(sib == root) throw new RuntimeException("root can not have siblings");
+    TNode newN = new TNode();
+    newN.parent = sib.parent;
+    newN.elem = o;
+    newN.mySiblingPos = sib.parent.children.insertAfter(sib.mySiblingPos, newN);
+    size++;
+    return newN;
   }
 
   @Override
@@ -118,14 +162,12 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public boolean isExternal(Position<E> p) {
-    // TODO Auto-generated method stub
-    return false;
+    return castToTNode(p).children.size() == 0;
   }
 
   @Override
   public boolean isInternal(Position<E> p) {
-    // TODO Auto-generated method stub
-    return false;
+    return castToTNode(p).children.size() > 0;
   }
 
   @Override
@@ -135,8 +177,10 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public E replaceElement(Position<E> p, E o) {
-    // TODO Auto-generated method stub
-    return null;
+    TNode n = castToTNode(p);
+    E temp = n.elem;
+    n.elem = o;
+    return temp;
   }
 
   public void print() {
@@ -149,11 +193,74 @@ public class MyTree<E> implements Tree<E> {
   private void print(TNode p, String indent) {
     // print the subtree originating at p
     System.out.println(indent + p.elem);
-    Iterator<Position<E>> it = p.children.elements();
+    Iterator<TNode> it = p.children.elements();
     while (it.hasNext())
     {
-      print((TNode) it.next(), indent + "--");
+      print(it.next(), indent + "  ");
     }
+  }
+
+  public int height() {
+    return height(root);
+  }
+
+  private int height(TNode p) {
+    // System.out.println(max);
+    int h = 0;
+    Iterator<TNode> it = p.children.elements();
+    while (it.hasNext())
+    {
+      h = Math.max(height(it.next()), h);
+    }
+    return h + 1;
+  }
+
+  public ArrayList<Position<E>> externalNodes() {
+    ArrayList<Position<E>> list = new ArrayList<Position<E>>();
+    return externalNodes(root, list);
+  }
+
+  private ArrayList<Position<E>> externalNodes(TNode p, ArrayList<Position<E>> list) {
+    Iterator<TNode> it = p.children.elements();
+    if(it.hasNext() == false) list.add(p);
+    while (it.hasNext())
+    {
+      externalNodes(it.next(), list);
+    }
+    return list;
+  }
+
+  class Helper {
+    TNode n;
+    int depth = -1;
+  }
+
+  public Position<E> deepestNode() {
+    Helper he = new Helper();
+
+    deepestNode(root, he.depth, he);
+    return he.n;
+  }
+
+  private void deepestNode(TNode n, int currentDepth, Helper he) {
+    int depth = currentDepth + 1;
+
+    if(isExternal(n))
+    {
+      if(currentDepth > he.depth)
+      {
+        he.depth = currentDepth;
+        he.n = n;
+      }
+      return;
+    }
+    Iterator<TNode> it = n.children.elements();
+
+    while (it.hasNext())
+    {
+      deepestNode(it.next(), depth, he);
+    }
+    return;
   }
 
   public static void main(String[] args) {
@@ -164,7 +271,21 @@ public class MyTree<E> implements Tree<E> {
     Position<String> pD = t.addChild(p, "D");
     t.addChild(pB, "E");
     t.addChild(pB, "F");
-    t.addChild(pD, "G");
+    Position<String> pG = t.addChild(pD, "G");
+     t.addChild(pG, "X");
+     t.addChild(pG, "Y");
     t.print();
+    System.out.println("--------------------");
+    System.out.println("height: "+t.height());
+    System.out.println("--------------------");
+    System.out.println("external nodes: ");
+    ArrayList<Position<String>> all = t.externalNodes();
+    for (Position<String> r : all)
+      System.out.println(r.element());
+    System.out.println("--------------------");
+    Position<String> deepest = t.deepestNode();
+    System.out.println("deepest node: "+deepest.element());
+    System.out.println("--------------------");
+    System.out.println("number of children: "+t.numberOfChildren(p));
   }
 }
