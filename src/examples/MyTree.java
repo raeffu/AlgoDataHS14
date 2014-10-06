@@ -132,7 +132,36 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public Position<E> addChildAt(int pos, Position<E> parent, E o) {
-    // TODO Auto-generated method stub
+    TNode par = castToTNode(parent);
+    TNode child = new TNode();
+    child.elem = o;
+    child.parent = par;
+
+    if(pos >= par.children.size())
+    {
+      child.mySiblingPos = par.children.insertLast(child);
+    }
+    else
+    {
+      Position<TNode> position = getSiblingPosition(pos, par);
+      if(position == null) throw new RuntimeException("Position not found");
+      child.mySiblingPos = par.children.insertBefore(position, child);
+    }
+
+    size++;
+    return null;
+  }
+
+  private Position<TNode> getSiblingPosition(int pos, TNode parent) {
+    Iterator<Position<TNode>> it = parent.children.positions();
+    int counter = 0;
+
+    while (it.hasNext())
+    {
+      if(counter == pos) return it.next();
+      it.next();
+      counter++;
+    }
     return null;
   }
 
@@ -140,24 +169,33 @@ public class MyTree<E> implements Tree<E> {
   public Position<E> addSiblingAfter(Position<E> sibling, E o) {
     TNode sib = castToTNode(sibling);
     if(sib == root) throw new RuntimeException("root can not have siblings");
-    TNode newN = new TNode();
-    newN.parent = sib.parent;
-    newN.elem = o;
-    newN.mySiblingPos = sib.parent.children.insertAfter(sib.mySiblingPos, newN);
+    TNode n = new TNode();
+    n.parent = sib.parent;
+    n.elem = o;
+    n.mySiblingPos = sib.parent.children.insertAfter(sib.mySiblingPos, n);
     size++;
-    return newN;
+    return n;
   }
 
   @Override
   public Position<E> addSiblingBefore(Position<E> sibling, E o) {
-    // TODO Auto-generated method stub
+    TNode sib = castToTNode(sibling);
+    if(sib == root) throw new RuntimeException("root can not have siblings");
+    TNode n = new TNode();
+    n.parent = sib.parent;
+    n.elem = o;
+    n.mySiblingPos = sib.parent.children.insertBefore(sib.mySiblingPos, n);
+    size++;
     return null;
   }
 
   @Override
   public void remove(Position<E> p) {
-    // TODO Auto-generated method stub
-
+//    TNode n = castToTNode(p);
+//    size--;
+//    n.creator = null; //invalidate node
+    
+//    n.parent.children.remove(p);
   }
 
   @Override
@@ -265,18 +303,20 @@ public class MyTree<E> implements Tree<E> {
 
   public static void main(String[] args) {
     MyTree<String> t = new MyTree<>();
-    Position<String> p = t.createRoot("A");
-    Position<String> pB = t.addChild(p, "B");
-    t.addChild(p, "C");
-    Position<String> pD = t.addChild(p, "D");
+    Position<String> pA = t.createRoot("A");
+    Position<String> pB = t.addChild(pA, "B");
+    t.addChild(pA, "C");
+    Position<String> pD = t.addChild(pA, "D");
     t.addChild(pB, "E");
     t.addChild(pB, "F");
     Position<String> pG = t.addChild(pD, "G");
-     t.addChild(pG, "X");
-     t.addChild(pG, "Y");
+    t.addChild(pG, "X");
+    t.addChild(pG, "Y");
+    t.addChildAt(3, pA, "Z");
+    t.addChildAt(3, pA, "ZZ");
     t.print();
     System.out.println("--------------------");
-    System.out.println("height: "+t.height());
+    System.out.println("height: " + t.height());
     System.out.println("--------------------");
     System.out.println("external nodes: ");
     ArrayList<Position<String>> all = t.externalNodes();
@@ -284,8 +324,8 @@ public class MyTree<E> implements Tree<E> {
       System.out.println(r.element());
     System.out.println("--------------------");
     Position<String> deepest = t.deepestNode();
-    System.out.println("deepest node: "+deepest.element());
+    System.out.println("deepest node: " + deepest.element());
     System.out.println("--------------------");
-    System.out.println("number of children: "+t.numberOfChildren(p));
+    System.out.println("number of children: " + t.numberOfChildren(pA));
   }
 }

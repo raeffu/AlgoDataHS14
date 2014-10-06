@@ -138,12 +138,11 @@ public class MyLinkedList<E> implements List<E> {
     n.next = old;
     n.prev = old.prev;
 
-    if(first == old) first = n;
-
+    if(first == old)
+      first = n;
     if(old.prev != null)
-    {
       old.prev.next = n;
-    }
+    
     old.prev = n;
     size++;
 
@@ -224,9 +223,9 @@ public class MyLinkedList<E> implements List<E> {
   @Override
   public Iterator<E> elements() {
     return new Iterator<E>() {
-      
+
       LNode current = first;
-      
+
       @Override
       public boolean hasNext() {
         return current != null;
