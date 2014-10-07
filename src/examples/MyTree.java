@@ -191,11 +191,11 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public void remove(Position<E> p) {
-//    TNode n = castToTNode(p);
-//    size--;
-//    n.creator = null; //invalidate node
+    TNode n = castToTNode(p);
+    size--;
+    n.creator = null; //invalidate node
     
-//    n.parent.children.remove(p);
+    n.parent.children.remove(n.mySiblingPos);
   }
 
   @Override
@@ -314,6 +314,9 @@ public class MyTree<E> implements Tree<E> {
     t.addChild(pG, "Y");
     t.addChildAt(3, pA, "Z");
     t.addChildAt(3, pA, "ZZ");
+    t.print();
+    System.out.println("--------------------");
+    t.remove(pD);
     t.print();
     System.out.println("--------------------");
     System.out.println("height: " + t.height());
