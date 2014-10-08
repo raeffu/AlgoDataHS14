@@ -64,17 +64,16 @@ public class MyTree<E> implements Tree<E> {
   public Iterator<Position<E>> childrenPositions(Position<E> parent) {
     final TNode p = castToTNode(parent);
     return new Iterator<Position<E>>() {
-      Iterator<Position<TNode>> it = p.children.positions();
+      Iterator<TNode> it = p.children.elements();
 
       @Override
       public boolean hasNext() {
         return it.hasNext();
       }
 
-      @SuppressWarnings("unchecked")
       @Override
       public Position<E> next() {
-        return (Position<E>) it.next();
+        return it.next();
       }
 
       @Override
@@ -195,7 +194,10 @@ public class MyTree<E> implements Tree<E> {
     size--;
     n.creator = null; //invalidate node
     
-    n.parent.children.remove(n.mySiblingPos);
+    if(n==root)
+      root = null;
+    else
+      n.parent.children.remove(n.mySiblingPos);
   }
 
   @Override
