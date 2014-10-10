@@ -12,6 +12,68 @@ public class SortTest {
   public static long cnt;
   static Random rand = new Random();
 
+  public static void heapSort(int[] a) {
+    int n = a.length;
+    // first we make 'a' a max-heap:
+    for (int i = 1; i < n; i++)
+      upHeap(a, i);
+    System.out.println("heap?" + checkHeap(a, n));
+    // Now we remove the max element and move it to the
+    // last position of the array 'a'. repair the heap with 'downHeap'
+    // Heap has now only n-1 elements.
+    // Repeat until all elements are at place.
+    for (int i = n - 1; i >= 0; i--)
+    {
+      swap(a, i, 0);
+      downHeap(a, 0, i);
+    }
+
+  }
+
+  /**
+   * @param a
+   * @param i
+   * @param len
+   */
+  private static void downHeap(int[] a, int i, int len) {
+    // assume a [i..len-1] is a heap, but the element
+    // at position i possibly violates the heap condition.
+    // swap a[i] with its bigger child until a[i..len-1] is a heap.
+    
+  }
+
+  /**
+   * @param a heap
+   * @param i position in heap
+   */
+  private static void upHeap(int[] a, int i) {
+    // swap i with parent if parent bigger until top element reached
+    
+    // assume a[0..i-1] is a heap. swap element
+    // at position i with its parent and so on
+    // until a[0..i] is a max-heap
+    int p = (i - 1) / 2;
+    while (i > 0)
+    {
+      if(a[p] < a[i])
+      {
+        swap(a, p, i);
+        i = p;
+        p = (i-1)/2;
+      }
+      else
+        i = 0;
+    }
+  }
+
+  static boolean checkHeap(int a[], int len) {
+    for (int i = a.length - 1; i > 0; i--)
+    {
+      if(a[i] > a[(i - 1) / 2]) return false;
+    }
+    return true;
+  }
+
   /**
    * @param a
    *          int aray
@@ -20,7 +82,7 @@ public class SortTest {
   public static boolean sortCheck(int[] a) {
     for (int i = 0; i < a.length - 1; i++)
     {
-      if (a[i] > a[i + 1]) return false;
+      if(a[i] > a[i + 1]) return false;
     }
     return true;
   }
@@ -37,8 +99,7 @@ public class SortTest {
     {
       for (int k = 0; k < i; k++)
       {
-        if (a[k] > a[k + 1])
-          swap(a, k, k + 1);
+        if(a[k] > a[k + 1]) swap(a, k, k + 1);
       }
       // now a[i] is on its final position!
     }
@@ -80,7 +141,7 @@ public class SortTest {
    * @param to
    */
   private static void qSort(int[] a, int from, int to) {
-    if (from >= to) return; // nothing to do if sequence has length 1 or less
+    if(from >= to) return; // nothing to do if sequence has length 1 or less
     int piv = partition(a, from, to);
     // now a[to..piv-1] <= a[piv] and
     // a[piv+1..to]>=a[piv]
@@ -102,7 +163,7 @@ public class SortTest {
     // take a random pivot and put it at the end
     // of the range
     // (necessary if data not random)
-    if (from < to) swap(a, rand.nextInt(to - from) + from, to);
+    if(from < to) swap(a, rand.nextInt(to - from) + from, to);
 
     int pivot = a[to];
     int left = from - 1;
@@ -113,9 +174,9 @@ public class SortTest {
       while (a[++left] < pivot); // stoppt bei Tauschkandidat von links
       while (a[--right] >= pivot)
       {
-        if (right == from) break;
+        if(right == from) break;
       }
-      if (right <= left) break;
+      if(right <= left) break;
       swap(a, left, right);
     }
 
@@ -125,7 +186,7 @@ public class SortTest {
 
   public static void main(String[] args) {
     long t1 = 0, t2 = 0, te1 = 0, te2 = 0, eTime = 0, time = 0;
-    int n = 10000000;
+    int n = 10;
     // we need a random generator
     Random rand = new Random();
     // rand.setSeed(54326346); // initialize always in the same state
@@ -139,7 +200,7 @@ public class SortTest {
     // get Time
     te1 = System.currentTimeMillis();
     t1 = threadBean.getCurrentThreadCpuTime();
-    quickSort(a);
+    heapSort(a);
     te2 = System.currentTimeMillis();
     t2 = threadBean.getCurrentThreadCpuTime();
     time = t2 - t1;
