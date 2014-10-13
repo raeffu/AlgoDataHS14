@@ -39,7 +39,25 @@ public class SortTest {
     // assume a [i..len-1] is a heap, but the element
     // at position i possibly violates the heap condition.
     // swap a[i] with its bigger child until a[i..len-1] is a heap.
-    
+    int left = i*2 + 1;
+    while(left < len){
+      int right = left + 1;
+//      int current;
+      if(right < len && a[left] < a[right]){
+        swap(a, i, right);
+        i = right;
+        left = i*2 + 1;
+        
+      }
+      else if(a[left] > a[right]){
+        swap(a, i, left);
+        i = left;
+        left = i*2 + 1;
+      }
+      else{
+        left = len;
+      }
+    }
   }
 
   /**
