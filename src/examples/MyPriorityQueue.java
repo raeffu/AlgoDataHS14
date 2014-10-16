@@ -93,7 +93,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
   }
 
   /**
-   * @param pos
+   * @param i
    */
   private void upHeap(int i) {
     int parent = i / 2;
@@ -119,7 +119,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
 
   /**
    * @param i
-   * @param j
+   * @param k
    */
   private void swap(int i, int k) {
     PQLocator<K, E> tmp = locs[i];
