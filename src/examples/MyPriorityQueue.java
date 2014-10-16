@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package examples;
 
@@ -8,11 +8,12 @@ import java.util.Random;
 
 /**
  * @author ps Implements an array-heap based priority-queue with Locators
- *
  */
-public class MyPriorityQueue<K extends Comparable<? super K>, E> implements PriorityQueue<K, E> {
+public class MyPriorityQueue<K extends Comparable<? super K>, E> implements PriorityQueue<K, E>
+{
 
-  class PQLocator<K1 extends Comparable<? super K1>, E1> implements Locator<K1, E1> {
+  class PQLocator<K1 extends Comparable<? super K1>, E1> implements Locator<K1, E1>
+  {
 
     K1 key;
     E1 elem;
@@ -25,7 +26,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
      * @see examples.Position#element()
      */
     @Override
-    public E1 element() {
+    public E1 element()
+    {
       return elem;
     }
 
@@ -35,7 +37,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
      * @see examples.Locator#key()
      */
     @Override
-    public K1 key() {
+    public K1 key()
+    {
       return key;
     }
 
@@ -50,7 +53,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#showMin()
    */
   @Override
-  public Locator<K, E> showMin() {
+  public Locator<K, E> showMin()
+  {
     return locs[1];
   }
 
@@ -60,7 +64,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#removeMin()
    */
   @Override
-  public Locator<K, E> removeMin() {
+  public Locator<K, E> removeMin()
+  {
     Locator<K, E> ret = showMin();
     remove(ret);
     return ret;
@@ -72,7 +77,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#insert(java.lang.Comparable, java.lang.Object)
    */
   @Override
-  public Locator<K, E> insert(K key, E element) {
+  public Locator<K, E> insert(K key, E element)
+  {
     PQLocator<K, E> n = new PQLocator<>();
     n.key = key;
     n.elem = element;
@@ -86,18 +92,20 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
   }
 
   /**
-	 * 
-	 */
-  private void expand() {
+   *
+   */
+  private void expand()
+  {
     locs = Arrays.copyOf(locs, locs.length * 2);
   }
 
   /**
    * @param i
    */
-  private void upHeap(int i) {
+  private void upHeap(int i)
+  {
     int parent = i / 2;
-    while (i > 0 && parent > 0)
+    while(i > 0 && parent > 0)
     {
       if(locs[i].key.compareTo(locs[parent].key) < 0)
       {
@@ -113,7 +121,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
   /**
    * @param i
    */
-  private void downHeap(int i) {
+  private void downHeap(int i)
+  {
 
   }
 
@@ -121,7 +130,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @param i
    * @param k
    */
-  private void swap(int i, int k) {
+  private void swap(int i, int k)
+  {
     PQLocator<K, E> tmp = locs[i];
     locs[i] = locs[k];
     locs[k] = tmp;
@@ -136,7 +146,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#remove(examples.Locator)
    */
   @Override
-  public void remove(Locator<K, E> loc) {
+  public void remove(Locator<K, E> loc)
+  {
     PQLocator<K, E> l = (PQLocator<K, E>) loc;
     if(l.creator != this)
       throw new RuntimeException("invalid locator");
@@ -155,7 +166,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * java.lang.Comparable)
    */
   @Override
-  public void replaceKey(Locator<K, E> loc, K newKey) {
+  public void replaceKey(Locator<K, E> loc, K newKey)
+  {
     PQLocator<K, E> l = (PQLocator<K, E>) loc;
     if(l.creator != this)
       throw new RuntimeException("invalid locator" + loc.element());
@@ -173,7 +185,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#isEmpty()
    */
   @Override
-  public boolean isEmpty() {
+  public boolean isEmpty()
+  {
     return size == 1;
   }
 
@@ -183,12 +196,14 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
    * @see examples.PriorityQueue#size()
    */
   @Override
-  public int size() {
+  public int size()
+  {
     return size;
   }
 
-  private boolean isHeap() {
-    for (int i = 2; i < size; i++)
+  private boolean isHeap()
+  {
+    for(int i = 2; i < size; i++)
     {
       if(locs[i].key.compareTo(locs[i / 2].key) < 0)
         return false;
@@ -196,16 +211,17 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements Prio
     return true;
   }
 
-  static public void main(String[] argv) {
+  static public void main(String[] argv)
+  {
     int N = 10;
     MyPriorityQueue<Double, String> pq = new MyPriorityQueue<>();
     Locator<Double, String>[] locs = new Locator[N];
     Random ra = new Random(63465);
-    for (int i = 0; i < N / 2; i++)
+    for(int i = 0; i < N / 2; i++)
       locs[i] = pq.insert(ra.nextDouble(), null);
-    for (int i = 0; i < N / 2; i++)
+    for(int i = 0; i < N / 2; i++)
       locs[i + N / 2] = pq.insert(ra.nextDouble(), null);
-    for (int i = 0; i < N / 2; i++)
+    for(int i = 0; i < N / 2; i++)
       pq.removeMin();
     System.out.println(pq.isHeap());
 
