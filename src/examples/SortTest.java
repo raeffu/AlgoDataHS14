@@ -17,7 +17,7 @@ public class SortTest {
     // first we make 'a' a max-heap:
     for (int i = 1; i < n; i++)
       upHeap(a, i);
-    
+
     System.out.println("heap?" + checkHeap(a, n));
     // Now we remove the max element and move it to the
     // last position of the array 'a'. repair the heap with 'downHeap'
@@ -106,6 +106,20 @@ public class SortTest {
     }
     return true;
   }
+  
+  /**
+   * @param a
+   *          int aray
+   * @return 'true' if 'a' is sorted
+   */
+  public static boolean sortCheck(int[] a, int to) {
+    for (int i = 0; i < a.length - 1 && i <= to; i++)
+    {
+      if(a[i] > a[i + 1])
+        return false;
+    }
+    return true;
+  }
 
   /**
    * Non optimized bubble sort for an int array
@@ -171,6 +185,26 @@ public class SortTest {
     qSort(a, piv + 1, to);
   }
 
+  public static void quickSelect(int[] a, int rank) {
+    // after return of this method the elements a[0]..a[rank-1]
+    // are all smaller or equal to a[rank]
+    // and the remaining elements a[rank+1]..a[a.lenght-1] are all
+    // bigger or equal to a[rank]
+    // to be completed:
+    // ----------------
+    qSelect(a, 0, a.length - 1, rank);
+  }
+
+  private static void qSelect(int[] a, int from, int to, int p) {
+    int piv = partition(a, from, to);
+    if(piv == p)
+      return;
+    else if(piv < p)
+      qSelect(a, piv+1, to, p);
+    else
+      qSelect(a, from, piv-1, p);
+  }
+
   /**
    * partitions the range such that all of the elements in the range
    * a[from..piv-1] are smaller than a[piv] and all elements in the range
@@ -211,7 +245,7 @@ public class SortTest {
 
   public static void main(String[] args) {
     long t1 = 0, t2 = 0, te1 = 0, te2 = 0, eTime = 0, time = 0;
-    int n = 1000;
+    int n = 10;
     // we need a random generator
     Random rand = new Random();
     // rand.setSeed(54326346); // initialize always in the same state
@@ -225,7 +259,7 @@ public class SortTest {
     // get Time
     te1 = System.currentTimeMillis();
     t1 = threadBean.getCurrentThreadCpuTime();
-    heapSort(a);
+    quickSelect(a, 5);
     te2 = System.currentTimeMillis();
     t2 = threadBean.getCurrentThreadCpuTime();
     time = t2 - t1;
