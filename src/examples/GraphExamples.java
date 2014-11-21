@@ -9,13 +9,18 @@ public class GraphExamples<V, E> {
   static final private Object NUMBER = new Object();
   static final private Object VISITED = new Object();
   static final private Object DISCOVERY = new Object();
+  // for dijkstra:
+  static final private Object WEIGHT = new Object();
+  static final private Object DISTANCE = new Object();
+  static final private Object PQLOCATOR = new Object();
 
   private Graph<V, E> g;
+  private Vertex<V> [] vertexArray;
 
   public GraphExamples(Graph<V, E> g) {
     this.g = g;
   }
-
+  
   public boolean isConnected() {
     Vertex<V> v = g.aVertex();
     visitDFS(v);// sets the attr. VISITED to all reachable vertices
@@ -112,7 +117,83 @@ public class GraphExamples<V, E> {
     }
     return null;
   }
+  
+  public int[][] getGatewayMatrix(int [][] ad){
+    return null;
+  }
 
+  public void setNumbers(){
+    vertexArray = new  Vertex[g.numberOfVertices()];
+    Iterator<Vertex<V>> it = g.vertices();
+    int num = 0;
+    while(it.hasNext()) {
+      vertexArray[num]=it.next();
+      vertexArray[num].set(NUMBER, num++);
+    }
+  }
+  
+  public int[][] getAdjacencyMatrix(){
+    setNumbers();
+    int n = g.numberOfVertices();
+    int [][] ad = new int[n][n];
+    boolean directed = g.isDirected();
+    Iterator<Edge<E>> it = g.edges();
+    while ( it.hasNext()) {
+      Vertex<V>[] endPts = g.endVertices(it.next()); 
+      int i = (int) endPts[0].get(NUMBER);
+      int k = (int) endPts[1].get(NUMBER);
+      ad[i][k]=1;
+      if (! directed) ad[k][i]=1;
+    }
+    return ad;
+  }
+  
+  public int[] shortestPath(int[][] ad, int from, int to){
+    // returns the vertex numbers of the shortest path 
+    // (hopping distance) fromn 'from' to 'to' or 'null'
+    // if no path exists
+    return null;
+  }
+  
+  public boolean isConnected(int ad[][]){
+    return false;
+  }
+  
+  public void dijkstra(Vertex<V> s){
+    // sets the attribute 's' of each vertex 'u' from wich 
+    // we can reach 's' to 'g' where 'g' is the gateway
+    // of 'u' on the shortest path from 'u' to 's' 
+    MyPriorityQueue<Double, Vertex<V>> pq = new MyPriorityQueue<>();
+    Iterator<Vertex<V>> it = g.vertices();
+    
+    while(it.hasNext()){
+      Vertex<V> v = it.next();
+      v.set(DISTANCE, Double.POSITIVE_INFINITY);
+      Locator<Double, Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY, v);
+      v.set(PQLOCATOR, loc);
+    }
+    s.set(DISTANCE, 0.0);
+    pq.replaceKey((Locator<Double, Vertex<V>>) s.get(PQLOCATOR), 0.0);
+    
+    while(!pq.isEmpty()){
+      Vertex<V> u = pq.removeMin().element();
+      Iterator<Edge<E>> itEdge = g.incidentInEdges(u);
+      while(itEdge.hasNext()){
+        Edge<E> e = itEdge.next();
+        double weight = 1.0;//default weight
+        if(e.has(WEIGHT)) weight = (Double) e.get(WEIGHT);
+        Vertex<V> z = g.opposite(e, u);
+        Double r = (Double) u.get(DISTANCE) + weight;
+        
+        if(r < (Double) z.get(DISTANCE)){
+          z.set(DISTANCE, r);
+          z.set(s, u); //set gateway
+          pq.replaceKey((Locator<Double, Vertex<V>>) z.get(PQLOCATOR), r);
+        }
+      }
+    }
+  }
+  
   /**
    * @param args
    * 
@@ -150,12 +231,12 @@ public class GraphExamples<V, E> {
       System.out.print(v);
     };
 
-    // A--B F
-    // /|\ /|
-    // / | \/ |
-    // C--D--E--G
-    // \ /
-    // \---/
-    //
+    //   A__B  F
+    //  /|\   /|
+    // / | \ / |
+    //C__D__E__G   
+    //\     /
+    // \___/
+    //    
   }
 }
