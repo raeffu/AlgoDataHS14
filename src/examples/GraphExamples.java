@@ -15,6 +15,10 @@ public class GraphExamples<V, E> {
   static final private Object DISTANCE = new Object();
   static final private Object PQLOCATOR = new Object();
 
+  // for kruskal
+  static final private Object MSF = new Object();
+  static final private Object CLUSTER = new Object();
+
   private Graph<V, E> g;
   private Vertex<V>[] vertexArray;
 
@@ -285,6 +289,66 @@ public class GraphExamples<V, E> {
     }
   }
 
+  public void kruskal() {
+    // gives the attribute MSF to each
+    // edge belonging to an minimal spanning tree
+
+    // create clusters, put the vertex in it
+    // and assign them to the vertices
+    Iterator<Vertex<V>> it = g.vertices();
+    while (it.hasNext())
+    {
+      Vertex<V> v = it.next();
+      ArrayList<Vertex<V>> cluster = new ArrayList<>();
+      cluster.add(v);
+      v.set(CLUSTER, cluster);
+    }
+    PriorityQueue<Double, Edge<E>> pq = new MyPriorityQueue<>();
+    Iterator<Edge<E>> edges = g.edges();
+
+    while (edges.hasNext())
+    {
+      Edge<E> e = edges.next();
+      double weight = (e.get(WEIGHT) == null) ? 1.0 : (Double) e.get(WEIGHT);
+      pq.insert(weight, e);
+    }
+
+    while (!pq.isEmpty())
+    {
+      Edge<E> e = pq.removeMin().element();
+      Vertex<V> v = g.origin(e);
+      Vertex<V> w = g.destination(e);
+
+      ArrayList<Vertex<V>> vCluster = (ArrayList<Vertex<V>>) v.get(CLUSTER);
+      ArrayList<Vertex<V>> wCluster = (ArrayList<Vertex<V>>) w.get(CLUSTER);
+
+      if(vCluster != wCluster)
+      {
+        e.set(MSF, null);
+        // merge clusters
+        if(vCluster.size() > wCluster.size())
+        {
+          for(Vertex<V> x : wCluster){
+            x.set(CLUSTER, vCluster);
+            vCluster.add(x);
+          }
+        }
+        else
+        {
+          for(Vertex<V> x : vCluster){
+            x.set(CLUSTER, wCluster);
+            wCluster.add(x);
+          }
+        }
+
+      }
+      //remove edge which is not in minimum spanning tree
+      else{
+        g.removeEdge(e);
+      }
+    }
+  }
+
   /**
    * @param args
    * 
@@ -359,12 +423,12 @@ public class GraphExamples<V, E> {
       }
     }
 
-    // A__B     F
-    //   /|\   /|
-    //  / | \ / |
+    // A__B F
+    // /|\ /|
+    // / | \ / |
     // C__D__E__G
-    // \     /
-    //  \___/
+    // \ /
+    // \___/
     //
   }
 }
