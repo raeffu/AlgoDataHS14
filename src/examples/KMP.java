@@ -6,7 +6,6 @@ package examples;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author lar02
