@@ -76,6 +76,21 @@ public class GraphExamples<V, E> {
 
     return cnt;
   }
+  
+  public int numberOfConnectedComponents(int[][] ad){
+    int cnt = 0;
+    int n = ad.length;
+    boolean[] visited = new boolean[n];
+    
+    for(int i=0; i<n; i++){
+      if(!visited[i]){
+        cnt++;
+        visitDFS(ad, i, visited);
+      }
+    }
+    
+    return cnt;
+  }
 
   private void setGW(Vertex<V> s) {
     // sets for all (reachable) vertices the attribute 's' to the value
@@ -191,7 +206,7 @@ public class GraphExamples<V, E> {
         visitDFS(ad, i, visited);
     }
   }
-
+  
   public int[] shortestPath(int[][] ad, int from, int to) {
     // returns the vertex numbers of the shortest path
     // (hopping distance) fromn 'from' to 'to' or 'null'
@@ -398,7 +413,7 @@ public class GraphExamples<V, E> {
     System.out.println();
     ge.setNumbers();
     int[][] ad = ge.getAdjacencyMatrix();
-    System.out.println(ge.isConnected(ad));
+    System.out.println("is connected: " + ge.isConnected(ad));
     int[] spath = ge.shortestPath(ad, (int) vC.get(NUMBER), (int) vF.get(NUMBER));
     if(spath == null)
       System.out.println("no path");
@@ -422,13 +437,17 @@ public class GraphExamples<V, E> {
         System.out.print(gw[i][k] + ", ");
       }
     }
+    
+    System.out.println("\n");
+    System.out.println("Number of connected components (Vertex): " + ge.numberOfConnectedComponents());
+    System.out.println("Number of connected components (AD-Matrix): " + ge.numberOfConnectedComponents(ad));
 
-    // A__B F
-    // /|\ /|
-    // / | \ / |
+    // A__B     F
+    //   /|\   /|
+    //  / | \ / |
     // C__D__E__G
-    // \ /
-    // \___/
+    // \     /
+    //  \___/
     //
   }
 }
