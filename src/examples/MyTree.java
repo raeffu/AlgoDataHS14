@@ -24,6 +24,10 @@ public class MyTree<E> implements Tree<E> {
 
   private TNode root;
   private int size;
+  
+//  // For shortestBranch
+//  private Position highestExternal;
+//  private int h; // height
 
   private TNode castToTNode(Position<E> p) {
     TNode n;
@@ -302,6 +306,30 @@ public class MyTree<E> implements Tree<E> {
     }
     return;
   }
+  
+//  public Position<E>[] shortestBranch(){
+//    h = Integer.MAX_VALUE;
+//    
+//    highestExternal(root(), 0);
+//    
+//    System.out.println("height: "+ h);
+//    System.out.println("highestExternal: " + highestExternal.element());
+//    return null;
+//  }
+//  
+//  private void highestExternal(Position<E> p, int height){
+//    Iterator<Position<E>> it = childrenPositions(p);
+//    
+//    while(it.hasNext()){
+//      p = it.next();
+//      if(isExternal(p) && height < h)
+//      {
+//          h = height;
+//          highestExternal = p;
+//      }
+//      highestExternal(p, height+1);
+//    }
+//  }
 
   public static void main(String[] args) {
     MyTree<String> t = new MyTree<>();
@@ -332,5 +360,7 @@ public class MyTree<E> implements Tree<E> {
     System.out.println("deepest node: " + deepest.element());
     System.out.println("--------------------");
     System.out.println("number of children: " + t.numberOfChildren(pA));
+    System.out.println("\n");
+//    System.out.println(t.shortestBranch());
   }
 }
