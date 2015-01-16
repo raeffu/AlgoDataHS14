@@ -1,6 +1,7 @@
 package examples;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -24,10 +25,10 @@ public class MyTree<E> implements Tree<E> {
 
   private TNode root;
   private int size;
-  
-//  // For shortestBranch
-//  private Position highestExternal;
-//  private int h; // height
+
+  // For shortestBranch
+  private Position highestExternal;
+  private int minDepth;
 
   private TNode castToTNode(Position<E> p) {
     TNode n;
@@ -39,8 +40,8 @@ public class MyTree<E> implements Tree<E> {
     {
       throw new RuntimeException("This is not a Position belonging to MyTree");
     }
-    if(n.creator == null) throw new RuntimeException("position was allready deleted!");
-    if(n.creator != this) throw new RuntimeException("position belongs to another MyLinkedList instance!");
+    if (n.creator == null) throw new RuntimeException("position was allready deleted!");
+    if (n.creator != this) throw new RuntimeException("position belongs to another MyLinkedList instance!");
     return n;
   }
 
@@ -51,7 +52,7 @@ public class MyTree<E> implements Tree<E> {
 
   @Override
   public Position<E> createRoot(E o) {
-    if(root != null) throw new RuntimeException("already a root node present");
+    if (root != null) throw new RuntimeException("already a root node present");
     TNode n = new TNode();
     n.elem = o;
     size++;
@@ -140,14 +141,14 @@ public class MyTree<E> implements Tree<E> {
     child.elem = o;
     child.parent = par;
 
-    if(pos >= par.children.size())
+    if (pos >= par.children.size())
     {
       child.mySiblingPos = par.children.insertLast(child);
     }
     else
     {
       Position<TNode> position = getSiblingPosition(pos, par);
-      if(position == null) throw new RuntimeException("Position not found");
+      if (position == null) throw new RuntimeException("Position not found");
       child.mySiblingPos = par.children.insertBefore(position, child);
     }
 
@@ -161,7 +162,7 @@ public class MyTree<E> implements Tree<E> {
 
     while (it.hasNext())
     {
-      if(counter == pos) return it.next();
+      if (counter == pos) return it.next();
       it.next();
       counter++;
     }
@@ -171,7 +172,7 @@ public class MyTree<E> implements Tree<E> {
   @Override
   public Position<E> addSiblingAfter(Position<E> sibling, E o) {
     TNode sib = castToTNode(sibling);
-    if(sib == root) throw new RuntimeException("root can not have siblings");
+    if (sib == root) throw new RuntimeException("root can not have siblings");
     TNode n = new TNode();
     n.parent = sib.parent;
     n.elem = o;
@@ -183,7 +184,7 @@ public class MyTree<E> implements Tree<E> {
   @Override
   public Position<E> addSiblingBefore(Position<E> sibling, E o) {
     TNode sib = castToTNode(sibling);
-    if(sib == root) throw new RuntimeException("root can not have siblings");
+    if (sib == root) throw new RuntimeException("root can not have siblings");
     TNode n = new TNode();
     n.parent = sib.parent;
     n.elem = o;
@@ -196,9 +197,9 @@ public class MyTree<E> implements Tree<E> {
   public void remove(Position<E> p) {
     TNode n = castToTNode(p);
     size--;
-    n.creator = null; //invalidate node
-    
-    if(n==root)
+    n.creator = null; // invalidate node
+
+    if (n == root)
       root = null;
     else
       n.parent.children.remove(n.mySiblingPos);
@@ -266,7 +267,7 @@ public class MyTree<E> implements Tree<E> {
 
   private ArrayList<Position<E>> externalNodes(TNode p, ArrayList<Position<E>> list) {
     Iterator<TNode> it = p.children.elements();
-    if(it.hasNext() == false) list.add(p);
+    if (it.hasNext() == false) list.add(p);
     while (it.hasNext())
     {
       externalNodes(it.next(), list);
@@ -289,9 +290,9 @@ public class MyTree<E> implements Tree<E> {
   private void deepestNode(TNode n, int currentDepth, Helper he) {
     int depth = currentDepth + 1;
 
-    if(isExternal(n))
+    if (isExternal(n))
     {
-      if(currentDepth > he.depth)
+      if (currentDepth > he.depth)
       {
         he.depth = currentDepth;
         he.n = n;
@@ -306,30 +307,47 @@ public class MyTree<E> implements Tree<E> {
     }
     return;
   }
-  
-//  public Position<E>[] shortestBranch(){
-//    h = Integer.MAX_VALUE;
-//    
-//    highestExternal(root(), 0);
-//    
-//    System.out.println("height: "+ h);
-//    System.out.println("highestExternal: " + highestExternal.element());
-//    return null;
-//  }
-//  
-//  private void highestExternal(Position<E> p, int height){
-//    Iterator<Position<E>> it = childrenPositions(p);
-//    
-//    while(it.hasNext()){
-//      p = it.next();
-//      if(isExternal(p) && height < h)
-//      {
-//          h = height;
-//          highestExternal = p;
-//      }
-//      highestExternal(p, height+1);
-//    }
-//  }
+
+  public Position<E>[] shortestBranch() {
+    minDepth = Integer.MAX_VALUE;
+
+    minExternal(root(), 0);
+
+    System.out.println("minDepth: " + minDepth);
+    System.out.println("highestExternal: " + highestExternal.element());
+
+    Position[] ret = new Position[minDepth+1];
+    ret[0] = root();
+
+    while (highestExternal != root())
+    {
+      ret[minDepth] = highestExternal;
+      highestExternal = parent(highestExternal);
+      minDepth--;
+    }
+
+    return ret;
+  }
+
+  private void minExternal(Position<E> p, int depth) {
+    if (isExternal(p))
+    {
+      if (minDepth > depth)
+      {
+        minDepth = depth;
+        highestExternal = p;
+      }
+    }
+    else
+    {
+      Iterator<Position<E>> it = childrenPositions(p);
+      while (it.hasNext())
+      {
+        Position<E> v = it.next();
+        minExternal(v, depth + 1);
+      }
+    }
+  }
 
   public static void main(String[] args) {
     MyTree<String> t = new MyTree<>();
@@ -361,6 +379,13 @@ public class MyTree<E> implements Tree<E> {
     System.out.println("--------------------");
     System.out.println("number of children: " + t.numberOfChildren(pA));
     System.out.println("\n");
-//    System.out.println(t.shortestBranch());
+    
+    String path = "[";
+    for (Position p : t.shortestBranch())
+    {
+      path += p.element() + ", ";
+    }
+    path = path.substring(0, path.lastIndexOf(", ")) + "]";
+    System.out.println(path);
   }
 }
