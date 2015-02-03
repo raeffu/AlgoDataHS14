@@ -263,7 +263,36 @@ public class GraphExamples<V, E> {
         return false;
     return true;
   }
-
+  
+  public boolean isTree(int ad[][]){
+    boolean isConnected = isConnected(ad);
+    boolean hasCycle = hasCycle(ad);
+    
+    System.out.println("isConnected: "+isConnected);
+    System.out.println("hasCycle: "+hasCycle);
+    
+    return isConnected && !hasCycle;
+  }
+  
+  public boolean hasCycle(int[][] ad){
+    int n = ad.length;
+    boolean[] visited = new boolean[n];
+    
+    return findCycle(ad, 0, visited);
+  }
+  
+  private boolean findCycle(int[][] ad, int p, boolean[] visited) {
+    visited[p] = true;
+    for (int i = 0; i < ad.length; i++)
+    {
+        if(ad[p][i] == 1 && !visited[i])
+          return findCycle(ad, i, visited);
+        else if(ad[p][i] == 1 && visited[i]) // back-edge found --> has cycle
+          return true;
+    }
+    return false;
+  }
+  
   public void dijkstra(Vertex<V> s) {
     // sets the attribute 's' of each vertex 'u' from wich
     // we can reach 's' to 'g' where 'g' is the gateway
@@ -441,6 +470,9 @@ public class GraphExamples<V, E> {
     System.out.println("\n");
     System.out.println("Number of connected components (Vertex): " + ge.numberOfConnectedComponents());
     System.out.println("Number of connected components (AD-Matrix): " + ge.numberOfConnectedComponents(ad));
+
+    System.out.println("\n");
+    System.out.println(ge.isTree(ad));
 
     // A__B     F
     //   /|\   /|
