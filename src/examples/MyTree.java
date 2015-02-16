@@ -1,7 +1,6 @@
 package examples;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -316,7 +315,7 @@ public class MyTree<E> implements Tree<E> {
     System.out.println("minDepth: " + minDepth);
     System.out.println("highestExternal: " + highestExternal.element());
 
-    Position[] ret = new Position[minDepth+1];
+    Position<E>[] ret = new Position[minDepth+1];
     ret[0] = root();
 
     while (highestExternal != root())
