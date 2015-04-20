@@ -1,12 +1,20 @@
 package test;
 
+import java.util.Random;
+
 public class Test {
 
   public static void main(String[] args) {
-//    System.out.println(1/Integer.MAX_VALUE);
-
-      String str = "\u0042";
-      System.out.println(str);
+      int n = 256;
+      Random rand = new Random();
+      
+      String output = "";
+      for(int i=0;i<24;i++){
+        if(i!=0) output = ",";
+        else output = "";
+        output += String.valueOf(rand.nextInt(n));
+        System.out.print(output);
+      }
 
   }
 
